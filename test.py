@@ -79,7 +79,6 @@ img = Image.new("RGB", (3480, 2460))
 # A4 format at 300 DPI (a bit lower to have dims modulo 60 = 0)
 # draw_grid(img, 60, 3480, 2460, "grey")
 # img.save("test.jpg", dpi=(300, 300))
-print(img.info)
 
 
 def get_aspect_ratio(image: Image):
