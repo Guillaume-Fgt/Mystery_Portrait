@@ -6,23 +6,33 @@ import shutil
 import re
 from typing import Iterator
 import logging
-from grid import draw_grid, draw_number
+from grid import draw_grid, draw_number, add_border
 import PIL.ImageOps
 
 
-def convert_to_BW(image_path: str, threshold: int) -> Image:
-    with Image.open(image_path) as portrait:
-        portrait_gray = portrait.convert("L")
-        portrait_threshold = portrait_gray.point(
-            lambda x: 255 if x > threshold else 0
-        )  # noqa: E501
-        return portrait_threshold
+def convert_to_BW(image: Image, threshold: int) -> Image:
+    image_gray = image.convert("L")
+    image_threshold = image_gray.point(lambda x: 255 if x > threshold else 0)
+    return image_threshold
 
 
 def closest_modulo_zero(num1: int, num2: int) -> int:
     while num1 % num2 != 0:
         num1 -= 1
     return num1
+
+
+def get_aspect_ratio(image: Image):
+    width, height = image.size
+    return width / height
+
+
+def create_canvas(aspect_ratio: float) -> Image:
+    if aspect_ratio < 1:
+        img = Image.new("RGB", (2460, 3480))
+    else:
+        img = Image.new("RGB", (3480, 2460))
+    return img
 
 
 def crop_image(image: Image, crop_width: int, crop_height: int) -> Image:
@@ -62,7 +72,7 @@ def iterator_PIL(image_width: int, image_height: int, pixel_iter: int) -> Iterat
 
 def generate_shape(width: int, height: int) -> None:
     original_im = Image.new(
-        "L",
+        "RGB",
         (width, height),
     )
     folder = folder_exists_or_clean("shapes")
@@ -96,8 +106,13 @@ def main(grid_size_pixel: int, image_name: str) -> None:
 
     logging.info("Generate shapes")
     generate_shape(grid_size_pixel, grid_size_pixel)
+
     logging.info("Process started")
-    portrait = convert_to_BW(image_name, 105)
+    with Image.open(image_name) as image:
+        aspect_ratio = get_aspect_ratio(image)
+        portrait = convert_to_BW(image, 105)
+
+    canvas = create_canvas(aspect_ratio)
     portrait_width, portrait_height = portrait.size
     crop_width = closest_modulo_zero(portrait_width, grid_size_pixel)
     crop_height = closest_modulo_zero(portrait_height, grid_size_pixel)
@@ -128,21 +143,22 @@ def main(grid_size_pixel: int, image_name: str) -> None:
 
     # creation of the mystery image:
     logging.info("Creation of the mystery image")
-    mystery_image = Image.new("L", (crop_width, crop_height))
+    mystery_image = Image.new("RGB", (crop_width, crop_height))
     img_matrice = iterator_PIL(crop_width, crop_height, grid_size_pixel)
     list_files = get_list_files("forms")
     for index, value in enumerate(img_matrice):
         form_image = Image.open(list_files[index])
-        # form_image = Image.open("shapes/0.jpg") #without shapes
+        # form_image = Image.open("shapes/0.jpg")  # without shapes
         number = re.search(r"(\d+)_(\d+)", list_files[index]).group(2)
-        draw_number(form_image, grid_size_pixel, number)
+        draw_number(form_image, grid_size_pixel, number, "grey")
         mystery_image.paste(
             form_image,
             box=value,
         )
-    draw_grid(mystery_image, grid_size_pixel, crop_height, crop_width)
-    mystery_image.save(f"Mystery_Portrait_{image_name}")
+    draw_grid(mystery_image, grid_size_pixel, crop_width, crop_height, "grey")
+    bordered_image = add_border(mystery_image, "black", 3)
+    bordered_image.save(f"Mystery_Portrait_{image_name}", format="jpeg", dpi=(300, 300))
 
 
 if __name__ == "__main__":
-    main(30, "ND.jpg")
+    main(9, "Eastwood.jpg")
