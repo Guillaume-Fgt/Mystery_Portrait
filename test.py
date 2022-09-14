@@ -94,6 +94,13 @@ def create_canvas(aspect_ratio: float) -> Image:
     return img
 
 
-aspect = get_aspect_ratio(Image.open("Eastwood.jpg"))
-image = create_canvas(aspect)
-print(image.size)
+# im = Image.open("Eastwood.jpg")
+# width, height = im.size
+# crop_width = closest_modulo_zero(2460, width)
+# crop_height = closest_modulo_zero(3480, height)
+# print(crop_width, crop_height)
+# aspect = get_aspect_ratio(Image.open("Eastwood.jpg"))
+# image = create_canvas(aspect)
+# print(image.size)
+
+print(closest_modulo_zero(2480, 59))

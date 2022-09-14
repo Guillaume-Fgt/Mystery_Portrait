@@ -41,8 +41,3 @@ def add_border(image: Image, border_color: str, border_width: int) -> Image:
     border_width = (border_width,) * 4
     image = ImageOps.expand(image, border=border_width, fill=border_color)
     return image
-
-
-def dpi_mm_toPx(dpi: int, dim_grid_mm: int) -> float:
-    dim_grid_inPx = (dpi * dim_grid_mm) / 25.4
-    return dim_grid_inPx

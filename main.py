@@ -8,6 +8,7 @@ from typing import Iterator
 import logging
 from grid import draw_grid, draw_number, add_border
 import PIL.ImageOps
+from output import mm_dpi_to_px
 
 
 def convert_to_BW(image: Image, threshold: int) -> Image:
@@ -29,9 +30,9 @@ def get_aspect_ratio(image: Image):
 
 def create_canvas(aspect_ratio: float) -> Image:
     if aspect_ratio < 1:
-        img = Image.new("RGB", (2460, 3480))
+        img = Image.new("RGB", (2460, 3480), color="white")
     else:
-        img = Image.new("RGB", (3480, 2460))
+        img = Image.new("RGB", (3480, 2460), color="white")
     return img
 
 
@@ -109,10 +110,8 @@ def main(grid_size_pixel: int, image_name: str) -> None:
 
     logging.info("Process started")
     with Image.open(image_name) as image:
-        aspect_ratio = get_aspect_ratio(image)
         portrait = convert_to_BW(image, 105)
 
-    canvas = create_canvas(aspect_ratio)
     portrait_width, portrait_height = portrait.size
     crop_width = closest_modulo_zero(portrait_width, grid_size_pixel)
     crop_height = closest_modulo_zero(portrait_height, grid_size_pixel)
@@ -160,5 +159,71 @@ def main(grid_size_pixel: int, image_name: str) -> None:
     bordered_image.save(f"Mystery_Portrait_{image_name}", format="jpeg", dpi=(300, 300))
 
 
+def main2(
+    width_mm: float, height_mm: float, grid_size_mm: float, dpi: int, image_path: str
+):
+    logging.basicConfig(level=logging.INFO)
+
+    logging.info("Finding pX dimensions")
+    # dimensions in px for the desired dpi and dimensions in mm
+    width_px = mm_dpi_to_px(dpi, width_mm)
+    height_px = mm_dpi_to_px(dpi, height_mm)
+    grid_size_px = mm_dpi_to_px(dpi, grid_size_mm)
+
+    # dimensions to have entire grid tile on x and y axis
+    resize_width = closest_modulo_zero(width_px, grid_size_px)
+    resize_height = closest_modulo_zero(height_px, grid_size_px)
+
+    logging.info("Generate shapes")
+    generate_shape(grid_size_px, grid_size_px)
+
+    # resize image accordingly
+    with Image.open(image_path) as image:
+        im = image.resize((resize_width, resize_height))
+        im_bw = convert_to_BW(im, 105)
+
+    logging.info("Split started")
+    split(
+        im_bw,
+        resize_width // grid_size_px,
+        resize_height // grid_size_px,
+        "split",
+    )
+    forms_folder = folder_exists_or_clean("forms")
+
+    # find the closest shape for each splitted part
+    logging.info("Searching for closest shape")
+    for root, _, files in os.walk("split"):
+        for name in files:
+            compare_dict = {}
+            name_img = Image.open(os.path.join(root, name))
+            for img_shape in img_shapes():
+                img = Image.open(img_shape)
+                compare_dict[img_shape] = compare_image_hash(name_img, img)
+            file_to_copy = min(compare_dict, key=compare_dict.get)
+            num_shape = re.search(r"(\d+)", file_to_copy).group(0)
+            new_name = re.search(r"(\d+)", name).group(0)
+            shutil.copyfile(file_to_copy, f"{forms_folder}/{new_name}_{num_shape}.jpg")
+
+    # creation of the mystery image:
+    logging.info("Creation of the mystery image")
+    mystery_image = Image.new("RGB", (resize_width, resize_height))
+    img_matrice = iterator_PIL(resize_width, resize_height, grid_size_px)
+    list_files = get_list_files("forms")
+    for index, value in enumerate(img_matrice):
+        form_image = Image.open(list_files[index])
+        # form_image = Image.open("shapes/0.jpg")  # without shapes
+        number = re.search(r"(\d+)_(\d+)", list_files[index]).group(2)
+        draw_number(form_image, grid_size_px, number, "grey")
+        mystery_image.paste(
+            form_image,
+            box=value,
+        )
+    draw_grid(mystery_image, grid_size_px, resize_width, resize_height, "grey")
+    bordered_image = add_border(mystery_image, "black", 3)
+    bordered_image.save(f"Mystery_Portrait_{image_path}", dpi=(300, 300))
+
+
 if __name__ == "__main__":
-    main(9, "Eastwood.jpg")
+    # main(9, "Eastwood.jpg")
+    main2(297, 210, 5, 300, "unnamed.jpg")
