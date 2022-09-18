@@ -1,12 +1,7 @@
-__pycache__/
+mystery_portrait/__pycache__/
 .venv/
-forms/
-shapes/
-split/
-McGregor.png
-Mystery_Portrait_Clooney.jpg
-Mystery_Portrait_Eastwood.jpg
-Mystery_Portrait_McGregor.png
-Mystery_Portrait_ND.jpg
-ND.jpg
+.pytest_cache
+mystery_portrait/.coverage
+.coverage
+mystery_portrait/tests/__pycache__
 
