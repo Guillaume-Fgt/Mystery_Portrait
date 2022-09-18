@@ -32,25 +32,6 @@ def folder_with_files() -> Generator:
     shutil.rmtree(f"{current_directory}/test_utils")
 
 
-def test_get_list_files(folder_with_files) -> None:
-    list_files = utils.get_list_files_ordered(folder_with_files)
-    assert len(list_files) == 3
-
-
-def test_get_list_files_order(folder_with_files):
-    list_files = utils.get_list_files_ordered(folder_with_files)
-    bool_order = True
-    for value in zip(list_files, list_files[1:]):
-        if value[0] > value[1]:
-            bool_order = False
-    assert bool_order
-
-
-def test_folder_exists_or_clean_existing(folder_with_files) -> None:
-    utils.folder_exists_or_clean(folder_with_files)
-    assert utils.get_list_files_ordered(folder_with_files) == []
-
-
 def test_folder_exists_or_clean_not_existing(folder_with_files) -> None:
     shutil.rmtree(folder_with_files)
     utils.folder_exists_or_clean("test_utils")

@@ -1,6 +1,5 @@
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageOps
-from mystery_portrait.utils import get_list_files_ordered
 from mystery_portrait.hash import compare_image_hash
 from typing import Iterator
 import re
@@ -110,7 +109,7 @@ def split(im: Image.Image, rows: int, cols: int, split_dir: Path):
                 i * row_height + row_height,
             )
             outp = im.crop(box)
-            outp_path = split_dir / f"{str(n)}.jpg"
+            outp_path = split_dir / f"{n:04}.jpg"
             outp.save(outp_path)
             n += 1
 
@@ -148,9 +147,9 @@ def create_mystery(
 ) -> Image.Image:
     mystery_image = Image.new("RGB", (width, height))
     img_matrice = iterator_PIL(width, height, grid_size)
-    list_files = get_list_files_ordered("forms")
+    list_files = [files.name for files in Path("forms").iterdir()]
     for index, value in enumerate(img_matrice):
-        form_image = Image.open(list_files[index])
+        form_image = Image.open(Path("forms") / list_files[index])
         # form_image = Image.open("shapes/0.jpg")  # without shapes
         re_number = re.search(r"(\d+)_(\d+)", list_files[index])
         if re_number:

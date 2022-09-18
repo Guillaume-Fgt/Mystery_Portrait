@@ -26,7 +26,7 @@ def main(
     bw_threshold: int,
     border_color: str,
     border_thickness: int,
-):
+) -> None:
 
     logging.basicConfig(level=logging.INFO)
 
