@@ -2,8 +2,8 @@ from PIL import Image
 import shutil
 import logging
 from pathlib import Path
+from mystery_portrait.shapes import generate_shapes
 from mystery_portrait.image import (
-    generate_shape,
     convert_to_BW,
     split,
     find_closest_shape,
@@ -42,7 +42,7 @@ def main(
 
     logging.info("Generate shapes")
     shape_folder = folder_exists_or_clean("shapes")
-    generate_shape(shape_folder, grid_size_px, grid_size_px)
+    generate_shapes(shape_folder, grid_size_px, grid_size_px)
 
     # resize image accordingly
     with Image.open(image_path) as image:

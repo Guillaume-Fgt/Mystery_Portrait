@@ -65,36 +65,6 @@ def iterator_PIL(image_width: int, image_height: int, pixel_iter: int) -> Iterat
             yield (width, height)
 
 
-def generate_shape(folder: Path, width: int, height: int) -> None:
-    original_im = Image.new(
-        "RGB",
-        (width, height),
-    )
-    im = original_im.copy()
-    im.save(f"{folder}/9.jpg")
-    inverted_image = ImageOps.invert(im)
-    inverted_image.save(f"{folder}/0.jpg")
-    draw = ImageDraw.Draw(im)
-    draw.rectangle(((0, 0), (width, int(height / 2) - 1)), fill="white")
-    im.save(f"{folder}/1.jpg")
-    inverted_image = ImageOps.invert(im)
-    inverted_image.save(f"{folder}/3.jpg")
-    rotated = im.rotate(90)
-    rotated.save(f"{folder}/2.jpg")
-    inverted_image = ImageOps.invert(rotated)
-    inverted_image.save(f"{folder}/4.jpg")
-    im = original_im.copy()
-    draw = ImageDraw.Draw(im)
-    draw.polygon([(0, 0), (width - 1, 0), (0, height - 1)], fill="white")
-    im.save(f"{folder}/5.jpg")
-    inverted_image = ImageOps.invert(im)
-    inverted_image.save(f"{folder}/7.jpg")
-    rotated = inverted_image.rotate(90)
-    rotated.save(f"{folder}/8.jpg")
-    inverted_image = ImageOps.invert(rotated)
-    inverted_image.save(f"{folder}/6.jpg")
-
-
 def split(im: Image.Image, rows: int, cols: int, split_dir: Path):
     im_width, im_height = im.size
     row_width = int(im_width / rows)
