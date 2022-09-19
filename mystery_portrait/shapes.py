@@ -3,11 +3,11 @@ from pathlib import Path
 
 
 def draw_polygon(
-    width: int, height: int, coordinates: list[tuple], color: str, filename: str
+    width: int, height: int, coordinates: list[tuple], filename: str
 ) -> None:
-    new_im = Image.new("L", (width, height))
+    new_im = Image.new("RGB", (width, height))
     draw = ImageDraw.Draw(new_im)
-    draw.polygon(coordinates, fill=color)
+    draw.polygon(coordinates, fill="white")
     new_im.save(f"{filename}")
 
 
@@ -27,4 +27,4 @@ def generate_shapes(folder: Path, width: int, height: int) -> None:
     }
 
     for key, value in all_shapes.items():
-        draw_polygon(width, height, value, "white", f"{folder}/{key}.jpg")
+        draw_polygon(width, height, value, f"{folder}/{key}.jpg")

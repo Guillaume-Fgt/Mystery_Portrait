@@ -8,6 +8,8 @@ from mystery_portrait.image import (
     split,
     find_closest_shape,
     create_mystery,
+    draw_grid,
+    add_border,
 )
 from mystery_portrait.utils import (
     mm_dpi_to_px,
@@ -23,6 +25,7 @@ def main(
     image_path: str,
     grid_size_mm: float,
     grid_color: str,
+    num_color: str,
     bw_threshold: int,
     border_color: str,
     border_thickness: int,
@@ -67,20 +70,16 @@ def main(
     # creation of the mystery image:
     logging.info("Creation of the mystery image")
 
-    bordered_image = create_mystery(
-        resize_width,
-        resize_height,
-        grid_size_px,
-        grid_color,
-        border_color,
-        border_thickness,
-        solution,
+    mystery_im = create_mystery(
+        resize_width, resize_height, grid_size_px, num_color, solution
     )
+    draw_grid(mystery_im, grid_size_px, resize_width, resize_height, "grey")
+    bordered_im = add_border(mystery_im, border_color, border_thickness)
 
     # saving the final image to original folder
     path = Path(image_path)
     portrait_path = path.parent / f"mystery_portrait_{path.name}"
-    bordered_image.save(portrait_path, dpi=(300, 300))
+    bordered_im.save(portrait_path, dpi=(300, 300))
 
     # removing working folders
     shutil.rmtree(shape_folder)
@@ -96,6 +95,7 @@ if __name__ == "__main__":
         "C:/Users/guill/Downloads/Vador.jpg",
         4,
         "grey",
+        "chocolate",
         105,
         "black",
         3,

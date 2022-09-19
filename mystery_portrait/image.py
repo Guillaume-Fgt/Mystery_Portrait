@@ -1,5 +1,5 @@
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageColor
 from mystery_portrait.hash import compare_image_hash
 from typing import Iterator
 import re
@@ -111,9 +111,7 @@ def create_mystery(
     width: int,
     height: int,
     grid_size: int,
-    grid_color: str,
-    border_color: str,
-    border_thickness: int,
+    num_color: str,
     solution: bool,
 ) -> Image.Image:
     mystery_image = Image.new("RGB", (width, height))
@@ -130,10 +128,14 @@ def create_mystery(
             number = re_number.group(2)
         else:
             raise ValueError(f"Number for {list_files[index]} not found!")
-        draw_number(form_image, grid_size, int(number), grid_color)
+        draw_number(form_image, grid_size, int(number), num_color)
         mystery_image.paste(
             form_image,
             box=value,
         )
-    draw_grid(mystery_image, grid_size, width, height, "grey")
-    return add_border(mystery_image, border_color, border_thickness)
+    return mystery_image
+
+
+def get_colors() -> None:
+    for name, code in ImageColor.colormap.items():
+        print(f"{name:30} : {code}")
