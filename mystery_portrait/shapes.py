@@ -2,18 +2,10 @@ from PIL import Image, ImageDraw
 from pathlib import Path
 
 
-def draw_polygon(
-    width: int, height: int, coordinates: list[tuple], filename: str
-) -> None:
-    new_im = Image.new("RGB", (width, height))
-    draw = ImageDraw.Draw(new_im)
-    draw.polygon(coordinates, fill="white")
-    new_im.save(f"{filename}")
-
-
-def generate_shapes(folder: Path, width: int, height: int) -> None:
-    """generate the 10 basics shapes used to create a mystery image"""
+def generate_dict_shapes(width: int, height: int) -> dict:
+    """return a dict with coordinates to create polygon shapes"""
     all_shapes = {
+        "dim": (width, height),
         0: [(0, 0), (0, height), (width, height), (width, 0)],
         1: [(0, 0), (0, (height / 2) - 1), (width, (height / 2) - 1), (width, 0)],
         2: [(0, 0), (0, height), ((width / 2) - 1, height), ((width / 2) - 1, 0)],
@@ -25,6 +17,19 @@ def generate_shapes(folder: Path, width: int, height: int) -> None:
         8: [(0, 0), (width - 1, height - 1), (width - 1, 0)],
         9: [(-1, -1), (-1, -1)],
     }
+    return all_shapes
 
-    for key, value in all_shapes.items():
-        draw_polygon(width, height, value, f"{folder}/{key}.jpg")
+
+def generate_shape(folder: Path, dict_shapes: dict) -> None:
+    """read a dict of shapes and ask to draw them"""
+    width, height = dict_shapes.pop("dim")
+    for key, value in dict_shapes.items():
+        new_im = Image.new("RGB", (width, height))
+        draw_polygon(new_im, value, "white")
+        new_im.save(f"{folder}/{key}.jpg")
+
+
+def draw_polygon(im: Image.Image, coordinates: list[tuple], color: str) -> None:
+    """draw a polygon over an image"""
+    draw = ImageDraw.Draw(im)
+    draw.polygon(coordinates, fill=color)
