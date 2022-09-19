@@ -4,6 +4,7 @@ import pytest
 from PIL import Image
 import os
 import shutil
+from pathlib import Path
 
 
 def test_closest_modulo_zero() -> None:
@@ -36,3 +37,9 @@ def test_folder_exists_or_clean_not_existing(folder_with_files) -> None:
     shutil.rmtree(folder_with_files)
     utils.folder_exists_or_clean("test_utils")
     assert os.path.exists("test_utils")
+
+
+def test_list_files_from_dir(folder_with_files) -> None:
+    folder_path = Path(folder_with_files)
+    list_files = list(utils.list_files_from_dir(folder_path))
+    assert len(list_files) == 3

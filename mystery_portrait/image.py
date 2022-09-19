@@ -114,13 +114,17 @@ def create_mystery(
     grid_color: str,
     border_color: str,
     border_thickness: int,
+    solution: bool,
 ) -> Image.Image:
     mystery_image = Image.new("RGB", (width, height))
     img_matrice = iterator_PIL(width, height, grid_size)
     list_files = [files.name for files in Path("forms").iterdir()]
     for index, value in enumerate(img_matrice):
-        form_image = Image.open(Path("forms") / list_files[index])
-        # form_image = Image.open("shapes/0.jpg")  # without shapes
+        if solution:
+            form_image = Image.open(Path("forms") / list_files[index])
+        else:
+            form_image = Image.open("shapes/0.jpg")  # without shapes
+
         re_number = re.search(r"(\d+)_(\d+)", list_files[index])
         if re_number:
             number = re_number.group(2)

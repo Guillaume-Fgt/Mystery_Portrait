@@ -26,6 +26,7 @@ def main(
     bw_threshold: int,
     border_color: str,
     border_thickness: int,
+    solution: bool,
 ) -> None:
 
     logging.basicConfig(level=logging.INFO)
@@ -73,6 +74,7 @@ def main(
         grid_color,
         border_color,
         border_thickness,
+        solution,
     )
 
     # saving the final image to original folder
@@ -88,5 +90,14 @@ def main(
 
 if __name__ == "__main__":
     main(
-        190, 277, 300, "C:/Users/guill/Downloads/Keanu.jpg", 4, "grey", 105, "black", 3
+        300,
+        200,
+        300,
+        "C:/Users/guill/Downloads/Vador.jpg",
+        4,
+        "grey",
+        105,
+        "black",
+        3,
+        True,
     )
