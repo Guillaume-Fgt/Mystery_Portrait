@@ -36,3 +36,8 @@ def test_folder_exists_or_clean_not_existing(folder_with_files) -> None:
     shutil.rmtree(folder_with_files)
     utils.folder_exists_or_clean("test_utils")
     assert os.path.exists("test_utils")
+
+
+def test_folder_exists_or_clean_existing(folder_with_files) -> None:
+    utils.folder_exists_or_clean("test_utils")
+    assert os.path.exists("test_utils")

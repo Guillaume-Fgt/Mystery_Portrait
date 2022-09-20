@@ -1,5 +1,5 @@
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageColor
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 from mystery_portrait.hash import compare_image_hash
 from typing import Iterator
 import re
@@ -134,8 +134,3 @@ def create_mystery(
             box=value,
         )
     return mystery_image
-
-
-def get_colors() -> None:
-    for name, code in ImageColor.colormap.items():
-        print(f"{name:30} : {code}")

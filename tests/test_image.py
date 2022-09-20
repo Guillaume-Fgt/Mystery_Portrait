@@ -5,6 +5,7 @@ import pytest
 from mystery_portrait.utils import folder_exists_or_clean
 import shutil
 from pathlib import Path
+import imagehash
 
 
 @pytest.fixture
@@ -44,3 +45,79 @@ def test_split(create_image, create_folder) -> None:
     image.split(create_image, 2, 2, create_folder)
     list_files = list(create_folder.iterdir())
     assert len(list_files) == 4
+
+
+def test_draw_grid(create_image) -> None:
+    hash1 = imagehash.phash(create_image)
+    image.draw_grid(create_image, 1, 2, 2, "white")
+    hash2 = imagehash.phash(create_image)
+    assert hash1 != hash2
+
+
+def test_draw_number(create_image) -> None:
+    hash1 = imagehash.phash(create_image)
+    image.draw_number(create_image, 1, 2, "white")
+    hash2 = imagehash.phash(create_image)
+    assert hash1 != hash2
+
+
+@pytest.fixture
+def folder_split() -> Generator[Path, None, None]:
+    folder = folder_exists_or_clean("split")
+    for i, j in ((0, "white"), (1, "black")):
+        new_image = Image.new("RGB", (2, 2), j)
+        new_image.save(f"{folder}/{i}.jpg")
+    yield folder
+    shutil.rmtree(folder)
+
+
+@pytest.fixture
+def folder_split_wrong_name() -> Generator[Path, None, None]:
+    folder = folder_exists_or_clean("split")
+    for i, j in (("zero", "black"), ("one", "white")):
+        new_image = Image.new("RGB", (2, 2), j)
+        new_image.save(f"{folder}/{i}.jpg")
+    yield folder
+    shutil.rmtree(folder)
+
+
+@pytest.fixture
+def folder_shape() -> Generator[Path, None, None]:
+    folder = folder_exists_or_clean("shape")
+    for i, j in ((0, "black"), (1, "white")):
+        new_image = Image.new("RGB", (2, 2), j)
+        new_image.save(f"{folder}/{i}.jpg")
+    yield folder
+    shutil.rmtree(folder)
+
+
+@pytest.fixture
+def folder_shape_wrong_name() -> Generator[Path, None, None]:
+    folder = folder_exists_or_clean("shape")
+    for i, j in (("zero", "black"), ("one", "white")):
+        new_image = Image.new("RGB", (2, 2), j)
+        new_image.save(f"{folder}/{i}.jpg")
+    yield folder
+    shutil.rmtree(folder)
+
+
+def test_find_closest_shape(folder_split, folder_shape, create_folder) -> None:
+    image.find_closest_shape(folder_split, folder_shape, create_folder)
+    list_files = []
+    for element in create_folder.iterdir():
+        list_files.append(element.name)
+    assert list_files == ["0_1.jpg", "1_0.jpg"]
+
+
+def test_find_closest_shape_value_error_num_shape(
+    folder_split, folder_shape_wrong_name, create_folder
+) -> None:
+    with pytest.raises(ValueError, match="Unable to find num of shape file one.jpg"):
+        image.find_closest_shape(folder_split, folder_shape_wrong_name, create_folder)
+
+
+def test_find_closest_split_value_error_num_shape(
+    folder_split_wrong_name, folder_shape, create_folder
+) -> None:
+    with pytest.raises(ValueError, match="Unable to find num of split file one.jpg"):
+        image.find_closest_shape(folder_split_wrong_name, folder_shape, create_folder)
