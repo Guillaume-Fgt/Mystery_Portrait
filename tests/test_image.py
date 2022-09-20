@@ -83,7 +83,7 @@ def folder_split_wrong_name() -> Generator[Path, None, None]:
 
 @pytest.fixture
 def folder_shape() -> Generator[Path, None, None]:
-    folder = folder_exists_or_clean("shape")
+    folder = folder_exists_or_clean("shapes")
     for i, j in ((0, "black"), (1, "white")):
         new_image = Image.new("RGB", (2, 2), j)
         new_image.save(f"{folder}/{i}.jpg")
@@ -93,7 +93,7 @@ def folder_shape() -> Generator[Path, None, None]:
 
 @pytest.fixture
 def folder_shape_wrong_name() -> Generator[Path, None, None]:
-    folder = folder_exists_or_clean("shape")
+    folder = folder_exists_or_clean("shapes")
     for i, j in (("zero", "black"), ("one", "white")):
         new_image = Image.new("RGB", (2, 2), j)
         new_image.save(f"{folder}/{i}.jpg")
@@ -123,17 +123,35 @@ def test_find_closest_split_value_error_num_shape(
         image.find_closest_shape(folder_split_wrong_name, folder_shape, create_folder)
 
 
-@pytest.fixture
-def folder_mystery() -> Generator:
+@pytest.fixture(params=(["_0.jpg", ".jpg"]))
+def folder_mystery(request) -> Generator[Path, None, None]:
     folder = folder_exists_or_clean("forms")
     for i in range(3):
         new_image = Image.new("RGB", (5, 5))
-        new_image.save(f"{folder}/{i}_0.jpg")
+        new_image.save(f"{folder}/{i}{request.param}")
     yield folder
     shutil.rmtree(folder)
 
 
-def test_create_mystery(folder_mystery) -> None:
-    im = image.create_mystery(10, 5, 5, "black", True, folder_mystery)
-    width, height = im.size
-    assert width, height == (10, 5)
+def test_create_mystery(folder_mystery: Path) -> None:
+    for file in folder_mystery.iterdir():
+        if file.name in ["0.jpg", "1.jpg", "2.jpg"]:
+            with pytest.raises(ValueError, match="Number for 0.jpg not found!"):
+                im = image.create_mystery(10, 5, 5, "black", True, folder_mystery)
+        else:
+            im = image.create_mystery(10, 5, 5, "black", True, folder_mystery)
+            width, height = im.size
+            assert width, height == (10, 5)
+
+
+def test_create_mystery_solution_false(
+    folder_mystery: Path, folder_shape: Path
+) -> None:
+    for file in folder_mystery.iterdir():
+        if file.name in ["0.jpg", "1.jpg", "2.jpg"]:
+            with pytest.raises(ValueError, match="Number for 0.jpg not found!"):
+                im = image.create_mystery(10, 5, 5, "black", False, folder_mystery)
+        else:
+            im = image.create_mystery(10, 5, 5, "black", False, folder_mystery)
+            width, height = im.size
+            assert width, height == (10, 5)
