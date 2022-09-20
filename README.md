@@ -4,6 +4,7 @@ A mystery image is composed of squares, numbered zero to ten. Each number matche
 Drawing those shapes will reveal the subject of the image. A celebrity, a famous monument etc. It's up to you.
 
 To run the package:
+clone the repo
 change the configuration in the config.json file. The parameters are:
     "width_mm": float = desired dimension in mm
     "height_mm": float = desired dimension in mm
@@ -17,10 +18,9 @@ change the configuration in the config.json file. The parameters are:
     "border_thickness": int = thickness of the border, in px
     "solution": boolean = weither generate the mystery image with shapes drawned or not
 
-    
 python -m mystery_portrait
 
-
+example of generated images
 
 Dependencies:
 Pillow, Imagehash
