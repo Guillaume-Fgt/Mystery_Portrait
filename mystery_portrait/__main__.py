@@ -2,6 +2,7 @@ from PIL import Image
 import shutil
 import logging
 from pathlib import Path
+from mystery_portrait.config import load_config
 from mystery_portrait.shapes import generate_shape, generate_dict_shapes, save_image
 from mystery_portrait.image import (
     convert_to_BW,
@@ -18,27 +19,16 @@ from mystery_portrait.utils import (
 )
 
 
-def main(
-    width_mm: float,
-    height_mm: float,
-    dpi: int,
-    image_path: str,
-    grid_size_mm: float,
-    grid_color: str,
-    num_color: str,
-    bw_threshold: int,
-    border_color: str,
-    border_thickness: int,
-    solution: bool,
-) -> None:
+def main() -> None:
 
     logging.basicConfig(level=logging.INFO)
 
+    config = load_config("./config.json")
     logging.info("Finding pX dimensions")
     # dimensions in px for the desired dpi and dimensions in mm
-    width_px = mm_dpi_to_px(dpi, width_mm)
-    height_px = mm_dpi_to_px(dpi, height_mm)
-    grid_size_px = mm_dpi_to_px(dpi, grid_size_mm)
+    width_px = mm_dpi_to_px(config.dpi, config.width_mm)
+    height_px = mm_dpi_to_px(config.dpi, config.height_mm)
+    grid_size_px = mm_dpi_to_px(config.dpi, config.grid_size_mm)
 
     # dimensions to have entire grid tile on x and y axis
     resize_width = closest_modulo_zero(width_px, grid_size_px)
@@ -52,9 +42,9 @@ def main(
         save_image(shape_folder, shape, filename)
 
     # resize image accordingly
-    with Image.open(image_path) as image:
+    with Image.open(config.image_path) as image:
         im = image.resize((resize_width, resize_height))
-        im_bw = convert_to_BW(im, bw_threshold)
+        im_bw = convert_to_BW(im, config.bw_threshold)
 
     logging.info("Split started")
     split_folder = folder_exists_or_clean("split")
@@ -74,13 +64,13 @@ def main(
     logging.info("Creation of the mystery image")
 
     mystery_im = create_mystery(
-        resize_width, resize_height, grid_size_px, num_color, solution
+        resize_width, resize_height, grid_size_px, config.num_color, config.solution
     )
-    draw_grid(mystery_im, grid_size_px, resize_width, resize_height, grid_color)
-    bordered_im = add_border(mystery_im, border_color, border_thickness)
+    draw_grid(mystery_im, grid_size_px, resize_width, resize_height, config.grid_color)
+    bordered_im = add_border(mystery_im, config.border_color, config.border_thickness)
 
     # saving the final image to original folder
-    path = Path(image_path)
+    path = Path(config.image_path)
     portrait_path = path.parent / f"mystery_portrait_{path.name}"
     bordered_im.save(portrait_path, dpi=(300, 300))
 
@@ -91,16 +81,4 @@ def main(
 
 
 if __name__ == "__main__":
-    main(
-        300,
-        200,
-        300,
-        "C:/Users/guill/Downloads/Vador.jpg",
-        4,
-        "grey",
-        "chocolate",
-        105,
-        "black",
-        3,
-        True,
-    )
+    main()

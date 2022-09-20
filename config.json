@@ -1,0 +1,13 @@
+{
+    "width_mm": 300,
+    "height_mm": 200,
+    "dpi": 300,
+    "image_path": "C:/Users/guill/Downloads/Vador.jpg",
+    "grid_size_mm": 4,
+    "grid_color": "grey",
+    "num_color": "grey",
+    "bw_threshold": 105,
+    "border_color": "grey",
+    "border_thickness": 3,
+    "solution": "True"
+}
