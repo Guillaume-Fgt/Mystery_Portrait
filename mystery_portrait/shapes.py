@@ -1,3 +1,4 @@
+from typing import Iterator
 from PIL import Image, ImageDraw
 from pathlib import Path
 
@@ -20,16 +21,20 @@ def generate_dict_shapes(width: int, height: int) -> dict:
     return all_shapes
 
 
-def generate_shape(folder: Path, dict_shapes: dict) -> None:
+def generate_shape(dict_shapes: dict) -> Iterator[tuple[Image.Image, int]]:
     """read a dict of shapes and ask to draw them"""
     width, height = dict_shapes.pop("dim")
     for key, value in dict_shapes.items():
         new_im = Image.new("RGB", (width, height))
-        draw_polygon(new_im, value, "white")
-        new_im.save(f"{folder}/{key}.jpg")
+        yield draw_polygon(new_im, value, "white"), key
 
 
-def draw_polygon(im: Image.Image, coordinates: list[tuple], color: str) -> None:
+def draw_polygon(im: Image.Image, coordinates: list[tuple], color: str) -> Image.Image:
     """draw a polygon over an image"""
     draw = ImageDraw.Draw(im)
     draw.polygon(coordinates, fill=color)
+    return im
+
+
+def save_image(folder: Path, im: Image.Image, key: int) -> None:
+    im.save(f"{folder}/{key}.jpg")

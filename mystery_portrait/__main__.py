@@ -2,7 +2,7 @@ from PIL import Image
 import shutil
 import logging
 from pathlib import Path
-from mystery_portrait.shapes import generate_shape, generate_dict_shapes
+from mystery_portrait.shapes import generate_shape, generate_dict_shapes, save_image
 from mystery_portrait.image import (
     convert_to_BW,
     split,
@@ -47,7 +47,9 @@ def main(
     logging.info("Generate shapes")
     shape_folder = folder_exists_or_clean("shapes")
     dict_shapes = generate_dict_shapes(grid_size_px, grid_size_px)
-    generate_shape(shape_folder, dict_shapes)
+    generator_shape = generate_shape(dict_shapes)
+    for shape, filename in generator_shape:
+        save_image(shape_folder, shape, filename)
 
     # resize image accordingly
     with Image.open(image_path) as image:
@@ -74,7 +76,7 @@ def main(
     mystery_im = create_mystery(
         resize_width, resize_height, grid_size_px, num_color, solution
     )
-    draw_grid(mystery_im, grid_size_px, resize_width, resize_height, "grey")
+    draw_grid(mystery_im, grid_size_px, resize_width, resize_height, grid_color)
     bordered_im = add_border(mystery_im, border_color, border_thickness)
 
     # saving the final image to original folder

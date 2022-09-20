@@ -1,7 +1,11 @@
-mystery_portrait/__pycache__/
+mystery_portrait/__pycache__
 .venv/
 .pytest_cache
 mystery_portrait/.coverage
 .coverage
 mystery_portrait/tests/__pycache__
-
+/shapes
+/split
+/forms
+src/mystery_portrait/__pycache__
+tests/__pycache__
