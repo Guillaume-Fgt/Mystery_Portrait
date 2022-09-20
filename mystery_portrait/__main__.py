@@ -64,7 +64,12 @@ def main() -> None:
     logging.info("Creation of the mystery image")
 
     mystery_im = create_mystery(
-        resize_width, resize_height, grid_size_px, config.num_color, config.solution
+        resize_width,
+        resize_height,
+        grid_size_px,
+        config.num_color,
+        config.solution,
+        forms_folder,
     )
     draw_grid(mystery_im, grid_size_px, resize_width, resize_height, config.grid_color)
     bordered_im = add_border(mystery_im, config.border_color, config.border_thickness)

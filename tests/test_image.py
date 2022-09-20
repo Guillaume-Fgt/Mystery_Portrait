@@ -121,3 +121,19 @@ def test_find_closest_split_value_error_num_shape(
 ) -> None:
     with pytest.raises(ValueError, match="Unable to find num of split file one.jpg"):
         image.find_closest_shape(folder_split_wrong_name, folder_shape, create_folder)
+
+
+@pytest.fixture
+def folder_mystery() -> Generator:
+    folder = folder_exists_or_clean("forms")
+    for i in range(3):
+        new_image = Image.new("RGB", (5, 5))
+        new_image.save(f"{folder}/{i}_0.jpg")
+    yield folder
+    shutil.rmtree(folder)
+
+
+def test_create_mystery(folder_mystery) -> None:
+    im = image.create_mystery(10, 5, 5, "black", True, folder_mystery)
+    width, height = im.size
+    assert width, height == (10, 5)
