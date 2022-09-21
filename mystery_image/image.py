@@ -30,7 +30,7 @@ def draw_grid(
 def draw_number(image: Image.Image, grid_size_pixel: int, num: int, color: str) -> None:
     draw = ImageDraw.Draw(image)
     myfont = ImageFont.truetype(
-        "mystery_portrait/ressources/Ubuntu-Regular.ttf", grid_size_pixel - 1
+        "mystery_image/ressources/Ubuntu-Regular.ttf", grid_size_pixel - 1
     )
     msg = f"{num}"
     draw.text(
