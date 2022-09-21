@@ -9,5 +9,5 @@
     "bw_threshold": 105,
     "border_color": "grey",
     "border_thickness": 3,
-    "solution": "True"
+    "solution": false
 }

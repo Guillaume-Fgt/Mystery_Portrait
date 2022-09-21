@@ -76,7 +76,10 @@ def main() -> None:
 
     # saving the final image to original folder
     path = Path(config.image_path)
-    portrait_path = path.parent / f"mystery_portrait_{path.name}"
+    if config.solution:
+        portrait_path = path.parent / f"mystery_image_solution_{path.name}"
+    else:
+        portrait_path = path.parent / f"mystery_image_{path.name}"
     bordered_im.save(portrait_path, dpi=(300, 300))
 
     # removing working folders

@@ -16,7 +16,7 @@ change the configuration in the config.json file. The parameters are:
     "bw_threshold": int = threshold used to convert the image in black and white. The bigger, the more pixel will be converted to white
     "border_color": str = color of the border
     "border_thickness": int = thickness of the border, in px
-    "solution": boolean = weither generate the mystery image with shapes drawned or not
+    "solution": boolean = weither generate the mystery image with shapes drawned or not. true or false, without quotes
 
 python -m mystery_portrait
 
