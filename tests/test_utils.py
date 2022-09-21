@@ -1,5 +1,5 @@
 from typing import Generator
-from mystery_portrait import utils
+from mystery_image import utils
 import pytest
 from PIL import Image
 import os

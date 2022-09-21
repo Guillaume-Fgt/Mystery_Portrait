@@ -1,6 +1,6 @@
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageOps
-from mystery_portrait.hash import compare_image_hash
+from mystery_image.hash import compare_image_hash
 from typing import Iterator
 import re
 import shutil

@@ -1,8 +1,8 @@
 from typing import Generator
-from mystery_portrait import image
+from mystery_image import image
 from PIL import Image
 import pytest
-from mystery_portrait.utils import folder_exists_or_clean
+from mystery_image.utils import folder_exists_or_clean
 import shutil
 from pathlib import Path
 import imagehash

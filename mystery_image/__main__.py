@@ -2,9 +2,9 @@ from PIL import Image
 import shutil
 import logging
 from pathlib import Path
-from mystery_portrait.config import load_config
-from mystery_portrait.shapes import generate_shape, generate_dict_shapes, save_image
-from mystery_portrait.image import (
+from mystery_image.config import load_config
+from mystery_image.shapes import generate_shape, generate_dict_shapes, save_image
+from mystery_image.image import (
     convert_to_BW,
     split,
     find_closest_shape,
@@ -12,7 +12,7 @@ from mystery_portrait.image import (
     draw_grid,
     add_border,
 )
-from mystery_portrait.utils import (
+from mystery_image.utils import (
     mm_dpi_to_px,
     closest_modulo_zero,
     folder_exists_or_clean,
