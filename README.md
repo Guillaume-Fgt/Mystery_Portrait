@@ -22,10 +22,10 @@ change the configuration in the config.json file. The parameters are:
 - **"border_thickness"**: int = thickness of the border, in px
 - **"solution"**: boolean = weither generate the mystery image with shapes drawned or not. true or false, **without quotes**
 
-
+With your python env in the folder of the config file, run:
 python -m mystery_image
 
 
 
 Dependencies:
-Pillow, Imagehash
+Pillow, Imagehash, pytest, pytest-cov, black, flake8, six
